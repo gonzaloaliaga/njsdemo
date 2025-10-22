@@ -10,6 +10,7 @@ export default function Home() {
     require("bootstrap/dist/js/bootstrap.bundle.min.js");
   }, []);
 
+  // Lista de productos
   const products = [
     {
       id: 1,
@@ -59,8 +60,9 @@ export default function Home() {
       name: "Goodnight Punpun Vol.1",
       price: "$25.580",
     },
-  ];
+  ]; // 👈 IMPORTANTE: cierre correcto del array
 
+  // Retorno del componente principal
   return (
     <div className="d-flex flex-column min-vh-100">
       {/* HEADER */}
@@ -68,11 +70,19 @@ export default function Home() {
         <nav>
           <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
             <h4 className="m-0">ComiCommerce</h4>
-            <Link href="/shoppingCart" className="btn btn-danger px-3">
-              Carrito
-            </Link>
+
+            {/* Botones Login y Carrito */}
+            <div className="d-flex align-items-center gap-2">
+              <Link href="/login" className="btn btn-outline-danger px-3">
+                Login
+              </Link>
+              <Link href="/shoppingCart" className="btn btn-danger px-3">
+                Carrito
+              </Link>
+            </div>
           </div>
 
+          {/* Barra de navegación */}
           <div className="d-flex justify-content-center align-items-center gap-3 bg-danger text-white py-2">
             <Link href="/" className="text-white text-decoration-none">
               Home
