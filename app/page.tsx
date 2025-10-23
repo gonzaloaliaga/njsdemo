@@ -1,13 +1,14 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import "bootstrap/dist/css/bootstrap.min.css";
+import Header from "./components/header";
 import { useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function Home() {
-  // Cargar scripts de Bootstrap en el cliente
   useEffect(() => {
-    require("bootstrap/dist/js/bootstrap.bundle.min.js");
+    // @ts-expect-error: Bootstrap no tiene tipos, se importa solo para activar JS en cliente
+    import("bootstrap/dist/js/bootstrap.bundle.min.js");
   }, []);
 
   // Lista de productos
@@ -60,52 +61,13 @@ export default function Home() {
       name: "Goodnight Punpun Vol.1",
       price: "$25.580",
     },
-  ]; // 👈 IMPORTANTE: cierre correcto del array
+  ];
 
   // Retorno del componente principal
   return (
     <div className="d-flex flex-column min-vh-100">
       {/* HEADER */}
-      <header>
-        <nav>
-          <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
-            <h4 className="m-0">ComiCommerce</h4>
-
-            {/* Botones Login y Carrito */}
-            <div className="d-flex align-items-center gap-2">
-              <Link href="/login" className="btn btn-outline-danger px-3">
-                Login
-              </Link>
-              <Link href="/shoppingCart" className="btn btn-danger px-3">
-                Carrito
-              </Link>
-            </div>
-          </div>
-
-          {/* Barra de navegación */}
-          <div className="d-flex justify-content-center align-items-center gap-3 bg-danger text-white py-2">
-            <Link href="/" className="text-white text-decoration-none">
-              Home
-            </Link>
-            <p className="m-0">___</p>
-            <Link href="/catalog" className="text-white text-decoration-none">
-              Productos
-            </Link>
-            <p className="m-0">___</p>
-            <Link href="/aboutUs" className="text-white text-decoration-none">
-              Nosotros
-            </Link>
-            <p className="m-0">___</p>
-            <Link href="/blogs" className="text-white text-decoration-none">
-              Blogs
-            </Link>
-            <p className="m-0">___</p>
-            <Link href="/contact" className="text-white text-decoration-none">
-              Contacto
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <Header />
 
       {/* MAIN CONTENT */}
       <main className="flex-grow-1 container mt-4">
