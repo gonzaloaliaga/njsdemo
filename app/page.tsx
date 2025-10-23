@@ -1,67 +1,18 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import Header from "./components/header";
 import { useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+
+// Elementos personalizados
+import Header from "./components/header";
+import { products } from "./components/products";
 
 export default function Home() {
   useEffect(() => {
     // @ts-expect-error: Bootstrap no tiene tipos, se importa solo para activar JS en cliente
     import("bootstrap/dist/js/bootstrap.bundle.min.js");
   }, []);
-
-  // Lista de productos
-  const products = [
-    {
-      id: 1,
-      img: "/products/dunmeshi.webp",
-      name: "Dungeon Meshi [Vol. 1 - 14]",
-      price: "$99.990",
-    },
-    {
-      id: 2,
-      img: "/products/spiderpunk.jpg",
-      name: "Spider Punk (2022) [#1 - 5]",
-      price: "$124.990",
-    },
-    {
-      id: 3,
-      img: "/products/absolutebatman.jpeg",
-      name: "ABSOLUTE BATMAN VOL.1",
-      price: "$28.500",
-    },
-    {
-      id: 4,
-      img: "/products/milesmorales.jpg",
-      name: "Miles Morales: Spider-Man (2022) #1",
-      price: "$37.430",
-    },
-    {
-      id: 5,
-      img: "/products/berserkmaximum.png",
-      name: "Berserk Maximum #1",
-      price: "$25.400",
-    },
-    {
-      id: 6,
-      img: "/products/jojodiamond.jpg",
-      name: "Jojo's Bizarre Adventure - Diamond Is Unbreakable 01",
-      price: "$17.990",
-    },
-    {
-      id: 7,
-      img: "/products/jojosteel.jpg",
-      name: "Jojo's Bizarre Adventure - Steel Ball Run 01",
-      price: "$23.990",
-    },
-    {
-      id: 8,
-      img: "/products/punpun.jpg",
-      name: "Goodnight Punpun Vol.1",
-      price: "$25.580",
-    },
-  ];
 
   // Retorno del componente principal
   return (
