@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 // Elementos personalizados
 import Header from "./components/header";
+import Footer from "./components/footer";
 import { products } from "./components/products";
 
 export default function Home() {
@@ -48,7 +49,7 @@ export default function Home() {
             </div>
             <div className="col-md-6 text-center bg-light">
               <Image
-                src="/assets/homePage/images/welcomeCardImg.jpg"
+                src="/assets/welcomeCardImg.jpg"
                 alt="Welcome to ComiCommerce"
                 width={600}
                 height={400}
@@ -88,22 +89,7 @@ export default function Home() {
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-light text-center py-3 mt-auto border-top">
-        <div className="container d-flex flex-column flex-sm-row justify-content-between align-items-center">
-          <p className="mb-2 mb-sm-0 text-secondary">ComiCommerce, 2025</p>
-          <div className="d-flex gap-3">
-            <Link href="#" className="text-secondary text-decoration-none">
-              Políticas de privacidad
-            </Link>
-            <Link href="#" className="text-secondary text-decoration-none">
-              Políticas de cookies
-            </Link>
-            <Link href="#" className="text-secondary text-decoration-none">
-              Información legal
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-function Header() {
+export default function Header() {
   return (
     <header>
       <nav>
@@ -28,7 +28,7 @@ function Header() {
             Productos
           </Link>
           <p className="m-0">___</p>
-          <Link href="/aboutUs" className="text-white text-decoration-none">
+          <Link href="/about" className="text-white text-decoration-none">
             Nosotros
           </Link>
           <p className="m-0">___</p>
@@ -44,5 +44,3 @@ function Header() {
     </header>
   );
 }
-
-export default Header;
