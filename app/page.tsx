@@ -1,18 +1,33 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 // Elementos personalizados
 import Header from "./components/header";
 import Footer from "./components/footer";
-import { products } from "./components/products";
+
+// USO DE API PROPIA
+type Product = {
+  id: number;
+  img: string;
+  name: string;
+  price: string;
+};
 
 export default function Home() {
+  const [products, setProducts] = useState<Product[]>([]);
+
   useEffect(() => {
     // @ts-expect-error: Bootstrap no tiene tipos, se importa solo para activar JS en cliente
     import("bootstrap/dist/js/bootstrap.bundle.min.js");
+
+    // Trae productos desde la API
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch((err) => console.error("Error fetching products:", err));
   }, []);
 
   // Retorno del componente principal
