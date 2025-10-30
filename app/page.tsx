@@ -23,10 +23,19 @@ export default function Home() {
     // @ts-expect-error: Bootstrap no tiene tipos, se importa solo para activar JS en cliente
     import("bootstrap/dist/js/bootstrap.bundle.min.js");
 
-    // Trae productos desde la API
+    // Fetch a la API
     fetch("/api/products")
       .then((res) => res.json())
-      .then((data) => setProducts(data))
+      .then((data) => {
+        // Mezclar los productos
+        const productosAleatorios = data.sort(() => Math.random() - 0.5);
+
+        // Tomar los primeros 8
+        const primerosOcho = productosAleatorios.slice(0, 8);
+
+        // Guardar en el estado
+        setProducts(primerosOcho);
+      })
       .catch((err) => console.error("Error fetching products:", err));
   }, []);
 
