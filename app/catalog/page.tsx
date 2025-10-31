@@ -42,7 +42,7 @@ export default function Catalogo() {
       ? products
       : products.filter((p) => p.categoria === categoriaSeleccionada);
 
-  // Categorías a mostrar (si es "Todas", mostramos todas las secciones)
+  // Categorías a mostrar (si es "Todas", muestra todas las secciones)
   const categoriasMostrar =
     categoriaSeleccionada === "Todas" ? categorias : [categoriaSeleccionada];
 
