@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-import { CarritoItem, Usuario } from "../components/types";
+import { Usuario } from "../components/types";
 
 export default function Header() {
   const [usuarioLogueado, setUsuarioLogueado] = useState<Usuario | null>(null);
@@ -13,15 +13,15 @@ export default function Header() {
   useEffect(() => {
     const user = localStorage.getItem("usuarioLogueado");
     if (user) {
-      const usuario = JSON.parse(user);
+      const usuario: Usuario = JSON.parse(user);
       setUsuarioLogueado(usuario);
 
-      // Sumar cantidades del carrito
-      const total = usuarioLogueado?.carrito.reduce(
-        (acc: number, item: CarritoItem) => acc + item.cantidad,
+      // Sumar cantidades del carrito usando la variable parseada
+      const total = usuario.carrito.reduce(
+        (acc, item) => acc + item.cantidad,
         0
       );
-      setCantidadCarrito(total || 0);
+      setCantidadCarrito(total);
     } else {
       setUsuarioLogueado(null);
       setCantidadCarrito(0);
