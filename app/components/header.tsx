@@ -23,19 +23,19 @@ export default function Header() {
           <Link href="/" className="text-white text-decoration-none">
             Home
           </Link>
-          <p className="m-0">___</p>
+          <p className="m-0">---</p>
           <Link href="/catalog" className="text-white text-decoration-none">
             Productos
           </Link>
-          <p className="m-0">___</p>
+          <p className="m-0">---</p>
           <Link href="/about" className="text-white text-decoration-none">
             Nosotros
           </Link>
-          <p className="m-0">___</p>
+          <p className="m-0">---</p>
           <Link href="/blogs" className="text-white text-decoration-none">
             Blogs
           </Link>
-          <p className="m-0">___</p>
+          <p className="m-0">---</p>
           <Link href="/contact" className="text-white text-decoration-none">
             Contacto
           </Link>
