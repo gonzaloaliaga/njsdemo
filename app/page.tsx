@@ -14,6 +14,7 @@ type Product = {
   img: string;
   name: string;
   price: string;
+  categoria: string;
 };
 
 export default function Home() {

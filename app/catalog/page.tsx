@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 // Elementos personalizados
-import Header from "./components/header";
-import Footer from "./components/footer";
+import Header from "../components/header";
+import Footer from "../components/footer";
 
 // USO DE API PROPIA
 type Product = {
@@ -14,6 +14,7 @@ type Product = {
   img: string;
   name: string;
   price: string;
+  categoria: string;
 };
 
 export default function Catalogo() {
