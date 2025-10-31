@@ -2,18 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { Product } from "../components/types";
+import { Product, Usuario } from "../components/types";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import Image from "next/image";
 
-interface User {
-  username: string;
-  carrito: {
-    productId: number;
-    quantity: number;
-  }[];
-}
+// Usamos el tipo `Usuario` y la forma de carrito { id, cantidad }
 
 export default function ProductDetailsContent() {
   const searchParams = useSearchParams();
@@ -22,7 +16,7 @@ export default function ProductDetailsContent() {
   const [producto, setProducto] = useState<Product | null>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
-  const [usuario, setUsuario] = useState<User | null>(null);
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
 
   useEffect(() => {
     if (!idParam || isNaN(Number(idParam))) {
@@ -56,23 +50,22 @@ export default function ProductDetailsContent() {
     }
 
     const carritoActual = usuario.carrito || [];
-    const index = carritoActual.findIndex(
-      (item) => item.productId === producto?.id
-    );
+    const index = carritoActual.findIndex((item) => item.id === producto?.id);
 
-    if (index >= 0) carritoActual[index].quantity += 1;
-    else carritoActual.push({ productId: producto!.id, quantity: 1 });
+    if (index >= 0) carritoActual[index].cantidad += 1;
+    else carritoActual.push({ id: producto!.id, cantidad: 1 });
 
-    const nuevoUsuario = { ...usuario, carrito: carritoActual };
+    const nuevoUsuario: Usuario = { ...usuario, carrito: carritoActual };
     setUsuario(nuevoUsuario);
     localStorage.setItem("usuarioLogueado", JSON.stringify(nuevoUsuario));
 
     const usuariosJSON = localStorage.getItem("usuarios");
-    let usuarios: User[] = usuariosJSON ? JSON.parse(usuariosJSON) : [];
-    usuarios = usuarios.map((u) =>
-      u.username === nuevoUsuario.username ? nuevoUsuario : u
-    );
+    let usuarios: Usuario[] = usuariosJSON ? JSON.parse(usuariosJSON) : [];
+    usuarios = usuarios.map((u) => (u.correo === nuevoUsuario.correo ? nuevoUsuario : u));
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+    // Notificar a otros componentes en la misma pestaña
+    window.dispatchEvent(new Event("carritoUpdated"));
 
     alert("Producto agregado al carrito");
   };

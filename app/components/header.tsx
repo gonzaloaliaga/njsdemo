@@ -2,23 +2,21 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-
-import { Usuario } from "../components/types";
+import { Usuario } from "./types";
 
 export default function Header() {
   const [usuarioLogueado, setUsuarioLogueado] = useState<Usuario | null>(null);
   const [cantidadCarrito, setCantidadCarrito] = useState<number>(0);
 
-  // Cargar usuario logueado y calcular cantidad del carrito
-  useEffect(() => {
+  const updateFromStorage = () => {
     const user = localStorage.getItem("usuarioLogueado");
     if (user) {
-      const usuario: Usuario = JSON.parse(user);
+      const usuario: any = JSON.parse(user);
       setUsuarioLogueado(usuario);
 
       // Sumar cantidades del carrito usando la variable parseada
-      const total = usuario.carrito.reduce(
-        (acc, item) => acc + item.cantidad,
+      const total = (usuario.carrito || []).reduce(
+        (acc: number, item: any) => acc + (item.cantidad ?? item.quantity ?? 0),
         0
       );
       setCantidadCarrito(total);
@@ -26,6 +24,30 @@ export default function Header() {
       setUsuarioLogueado(null);
       setCantidadCarrito(0);
     }
+  };
+
+  // Cargar usuario logueado y calcular cantidad del carrito
+  useEffect(() => {
+    updateFromStorage();
+
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "usuarioLogueado" || e.key === null) updateFromStorage();
+    };
+    const onCarritoUpdated = () => updateFromStorage();
+
+    window.addEventListener("storage", onStorage);
+    window.addEventListener(
+      "carritoUpdated",
+      onCarritoUpdated as EventListener
+    );
+
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener(
+        "carritoUpdated",
+        onCarritoUpdated as EventListener
+      );
+    };
   }, []);
 
   const handleLogout = () => {
