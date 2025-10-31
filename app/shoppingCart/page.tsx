@@ -117,25 +117,7 @@ export default function ShoppingCartPage() {
       return;
     }
 
-    const total = computeTotal();
-    const orden = {
-      id: Date.now(),
-      user: usuario.correo,
-      items: usuario.carrito,
-      total,
-      createdAt: new Date().toISOString(),
-    };
-    const ordenesJSON = localStorage.getItem("ordenes");
-    const ordenes = ordenesJSON ? JSON.parse(ordenesJSON) : [];
-    ordenes.push(orden);
-    localStorage.setItem("ordenes", JSON.stringify(ordenes));
-
-    // limpiar carrito
-    const nuevoUsuario: Usuario = { ...usuario, carrito: [] };
-    updateUsuarioAndStorage(nuevoUsuario);
-
-    alert("Pago simulado completado. Gracias por tu compra.");
-    router.push("/");
+    router.push("/checkout");
   };
 
   return (
@@ -254,7 +236,7 @@ export default function ShoppingCartPage() {
                   className="btn btn-danger w-100"
                   onClick={handleCheckout}
                 >
-                  Pagar
+                  Proceder al checkout
                 </button>
               </div>
             </div>

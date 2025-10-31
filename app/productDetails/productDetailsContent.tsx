@@ -61,7 +61,9 @@ export default function ProductDetailsContent() {
 
     const usuariosJSON = localStorage.getItem("usuarios");
     let usuarios: Usuario[] = usuariosJSON ? JSON.parse(usuariosJSON) : [];
-    usuarios = usuarios.map((u) => (u.correo === nuevoUsuario.correo ? nuevoUsuario : u));
+    usuarios = usuarios.map((u) =>
+      u.correo === nuevoUsuario.correo ? nuevoUsuario : u
+    );
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
 
     // Notificar a otros componentes en la misma pestaña
