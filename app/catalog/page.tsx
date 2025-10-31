@@ -5,6 +5,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 // Elementos personalizados
 import Header from "../components/header";
 import Footer from "../components/footer";
+import Link from "next/link";
+import Image from "next/image";
 
 // USO DE API PROPIA
 type Product = {
@@ -41,32 +43,39 @@ export default function Catalogo() {
       {/* MAIN CONTENT */}
       <main className="flex-grow-1 container mt-4">
         {categorias.map((categoria) => (
-          <section key={categoria} style={{ marginBottom: "2rem" }}>
-            <h2>{categoria}</h2>
-            <ul
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: "1rem",
-              }}
-            >
+          <section key={categoria} className="mb-5">
+            {/* Título de categoría */}
+            <h2 className="mb-4 border-bottom pb-2">{categoria}</h2>
+
+            {/* Grid de productos */}
+            <div className="row g-4">
               {products
                 .filter((p) => p.categoria === categoria)
-                .map((p) => (
-                  <li
-                    key={p.id}
-                    style={{
-                      listStyle: "none",
-                      border: "1px solid #ccc",
-                      padding: "1rem",
-                    }}
-                  >
-                    {p.img && <img src={p.img} alt={p.name} width={100} />}
-                    <h3>{p.name}</h3>
-                    <p>{p.price}</p>
-                  </li>
+                .map((product) => (
+                  <div key={product.id} className="col-6 col-md-4 col-lg-3">
+                    <div className="card h-100 text-center shadow-sm border-0">
+                      <Link href={`/productDetails?id=${product.id}`}>
+                        <Image
+                          src={product.img}
+                          alt={product.name}
+                          width={200}
+                          height={250}
+                          className="card-img-top p-3 img-fluid"
+                        />
+                      </Link>
+                      <div className="card-body">
+                        <Link
+                          href={`/productDetails?id=${product.id}`}
+                          className="text-decoration-none fw-semibold d-block mb-2 text-dark"
+                        >
+                          {product.name}
+                        </Link>
+                        <p className="text-muted">{product.price}</p>
+                      </div>
+                    </div>
+                  </div>
                 ))}
-            </ul>
+            </div>
           </section>
         ))}
       </main>
