@@ -8,14 +8,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Header from "./components/header";
 import Footer from "./components/footer";
 
-// USO DE API PROPIA
-type Product = {
-  id: number;
-  img: string;
-  name: string;
-  price: string;
-  categoria: string;
-};
+// Importación de type product para usar API PROPIA
+import { Product } from "../app/components/types";
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);

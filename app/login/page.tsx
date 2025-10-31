@@ -6,6 +6,8 @@ import Link from "next/link";
 import Header from "../components/header";
 import Footer from "../components/footer";
 
+import { Usuario } from "../components/types";
+
 export default function LoginPage() {
   const router = useRouter();
   const [correo, setCorreo] = useState("");
@@ -17,9 +19,11 @@ export default function LoginPage() {
       setError("Por favor completa todos los campos.");
       return;
     }
-    const usuarios = JSON.parse(localStorage.getItem("usuarios") || "[]");
+    const usuarios: Usuario[] = JSON.parse(
+      localStorage.getItem("usuarios") || "[]"
+    );
     // Buscar usuario por correo
-    const usuarioPorCorreo = usuarios.find((u: any) => u.correo === correo);
+    const usuarioPorCorreo = usuarios.find((u: Usuario) => u.correo === correo);
     if (!usuarioPorCorreo) {
       setError("El correo no existe. Por favor regístrate primero.");
       return;

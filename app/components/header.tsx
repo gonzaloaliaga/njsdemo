@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
+import { CarritoItem, Usuario } from "../components/types";
+
 export default function Header() {
-  const [usuarioLogueado, setUsuarioLogueado] = useState<any>(null);
+  const [usuarioLogueado, setUsuarioLogueado] = useState<Usuario | null>(null);
   const [cantidadCarrito, setCantidadCarrito] = useState<number>(0);
 
   // Cargar usuario logueado y calcular cantidad del carrito
@@ -15,8 +17,8 @@ export default function Header() {
       setUsuarioLogueado(usuario);
 
       // Sumar cantidades del carrito
-      const total = usuario.carrito?.reduce(
-        (acc: number, item: any) => acc + item.cantidad,
+      const total = usuarioLogueado?.carrito.reduce(
+        (acc: number, item: CarritoItem) => acc + item.cantidad,
         0
       );
       setCantidadCarrito(total || 0);
@@ -27,7 +29,9 @@ export default function Header() {
   }, []);
 
   const handleLogout = () => {
-    const confirmar = window.confirm("¿Estás seguro de que quieres cerrar sesión?");
+    const confirmar = window.confirm(
+      "¿Estás seguro de que quieres cerrar sesión?"
+    );
     if (!confirmar) return;
 
     localStorage.removeItem("usuarioLogueado");
