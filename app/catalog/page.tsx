@@ -20,6 +20,8 @@ type Product = {
 export default function Catalogo() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categorias, setCategorias] = useState<string[]>([]);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] =
+    useState<string>("Todas");
 
   useEffect(() => {
     fetch("/api/products")
@@ -34,22 +36,46 @@ export default function Catalogo() {
       .catch((err) => console.error("Error fetching products:", err));
   }, []);
 
-  // Retorno del componente principal
+  // Filtrar productos según categoría seleccionada
+  const productosFiltrados =
+    categoriaSeleccionada === "Todas"
+      ? products
+      : products.filter((p) => p.categoria === categoriaSeleccionada);
+
+  // Categorías a mostrar (si es "Todas", mostramos todas las secciones)
+  const categoriasMostrar =
+    categoriaSeleccionada === "Todas" ? categorias : [categoriaSeleccionada];
+
   return (
     <div className="d-flex flex-column min-vh-100">
-      {/* HEADER */}
       <Header />
 
-      {/* MAIN CONTENT */}
       <main className="flex-grow-1 container mt-4">
-        {categorias.map((categoria) => (
-          <section key={categoria} className="mb-5">
-            {/* Título de categoría */}
-            <h2 className="mb-4 border-bottom pb-2">{categoria}</h2>
+        {/* Selector de categoría */}
+        <div className="d-flex justify-content-center mb-4">
+          <div className="col-12 col-md-6">
+            <select
+              className="form-select form-select-lg shadow-sm"
+              value={categoriaSeleccionada}
+              onChange={(e) => setCategoriaSeleccionada(e.target.value)}
+            >
+              <option value="Todas">Todas las categorías</option>
+              {categorias.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
-            {/* Grid de productos */}
+        {/* Catálogo de productos */}
+        {categoriasMostrar.map((categoria) => (
+          <section key={categoria} className="mb-5">
+            <h2 className="mb-4 border-bottom pb-2 text-center">{categoria}</h2>
+
             <div className="row g-4">
-              {products
+              {productosFiltrados
                 .filter((p) => p.categoria === categoria)
                 .map((product) => (
                   <div key={product.id} className="col-6 col-md-4 col-lg-3">
