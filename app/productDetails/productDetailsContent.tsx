@@ -6,6 +6,7 @@ import { Product, Usuario } from "../components/types";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import Image from "next/image";
+import router from "next/router";
 
 // Usamos el tipo `Usuario` y la forma de carrito { id, cantidad }
 
@@ -46,6 +47,7 @@ export default function ProductDetailsContent() {
   const agregarAlCarrito = () => {
     if (!usuario) {
       alert("Debes iniciar sesión para agregar productos al carrito");
+      router.push("/login");
       return;
     }
 

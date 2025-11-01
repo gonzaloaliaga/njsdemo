@@ -8,53 +8,53 @@ export default function Header() {
   const [usuarioLogueado, setUsuarioLogueado] = useState<Usuario | null>(null);
   const [cantidadCarrito, setCantidadCarrito] = useState<number>(0);
 
+  // Función para actualizar desde localStorage
   const updateFromStorage = () => {
-    const user = localStorage.getItem("usuarioLogueado");
-    if (user) {
-      const usuario: any = JSON.parse(user);
-      setUsuarioLogueado(usuario);
+    const userData = localStorage.getItem("usuarioLogueado");
 
-      // Sumar cantidades del carrito usando la variable parseada
-      const total = (usuario.carrito || []).reduce(
-        (acc: number, item: any) => acc + (item.cantidad ?? item.quantity ?? 0),
-        0
-      );
-      setCantidadCarrito(total);
+    if (userData) {
+      try {
+        const usuario: Usuario = JSON.parse(userData);
+        setUsuarioLogueado(usuario);
+
+        // Calcular cantidad total de productos en el carrito
+        const total = (usuario.carrito ?? []).reduce(
+          (acc, item) => acc + (item.cantidad ?? 0),
+          0
+        );
+        setCantidadCarrito(total);
+      } catch {
+        console.error("Error al parsear usuarioLogueado");
+        setUsuarioLogueado(null);
+        setCantidadCarrito(0);
+      }
     } else {
       setUsuarioLogueado(null);
       setCantidadCarrito(0);
     }
   };
 
-  // Cargar usuario logueado y calcular cantidad del carrito
   useEffect(() => {
     updateFromStorage();
 
+    // Escuchar cambios en localStorage o eventos personalizados
     const onStorage = (e: StorageEvent) => {
       if (e.key === "usuarioLogueado" || e.key === null) updateFromStorage();
     };
+
     const onCarritoUpdated = () => updateFromStorage();
 
     window.addEventListener("storage", onStorage);
-    window.addEventListener(
-      "carritoUpdated",
-      onCarritoUpdated as EventListener
-    );
+    window.addEventListener("carritoUpdated", onCarritoUpdated);
 
     return () => {
       window.removeEventListener("storage", onStorage);
-      window.removeEventListener(
-        "carritoUpdated",
-        onCarritoUpdated as EventListener
-      );
+      window.removeEventListener("carritoUpdated", onCarritoUpdated);
     };
   }, []);
 
   const handleLogout = () => {
-    const confirmar = window.confirm(
-      "¿Estás seguro de que quieres cerrar sesión?"
-    );
-    if (!confirmar) return;
+    if (!window.confirm("¿Estás seguro de que quieres cerrar sesión?")) return;
 
     localStorage.removeItem("usuarioLogueado");
     setUsuarioLogueado(null);

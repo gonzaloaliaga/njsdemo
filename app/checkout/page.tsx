@@ -1,19 +1,38 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Usuario, Product } from "../components/types";
+import { Usuario, Product, CarritoItem } from "../components/types";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import { parsePrice, formatPrice } from "../../lib/price";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+
+interface FormData {
+  nombre: string;
+  direccion: string;
+  ciudad: string;
+  telefono: string;
+  metodoPago: "tarjeta" | "transferencia";
+  cardNumber: string;
+  expiry: string;
+  cardName: string;
+  cvv: string;
+}
+
+interface FormErrors {
+  telefono?: string;
+  cardNumber?: string;
+  expiry?: string;
+  cardName?: string;
+  cvv?: string;
+}
 
 export default function CheckoutPage() {
   const router = useRouter();
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     nombre: "",
     direccion: "",
     ciudad: "",
@@ -24,9 +43,9 @@ export default function CheckoutPage() {
     cardName: "",
     cvv: "",
   });
+  const [errors, setErrors] = useState<FormErrors>({});
 
-  const [errors, setErrors] = useState<any>({});
-
+  // 🔹 Cargar usuario y productos
   useEffect(() => {
     const userJSON = localStorage.getItem("usuarioLogueado");
     if (!userJSON) {
@@ -34,29 +53,29 @@ export default function CheckoutPage() {
       router.push("/login");
       return;
     }
-    setUsuario(JSON.parse(userJSON));
+
+    const user: Usuario = JSON.parse(userJSON);
+    setUsuario(user);
 
     fetch("/api/products")
       .then((r) => r.json())
-      .then((data: Product[]) => {
-        setProducts(data);
-      })
+      .then((data: Product[]) => setProducts(data))
       .catch(() => setProducts([]))
       .finally(() => setLoadingProducts(false));
   }, [router]);
 
+  // 🔹 Resolver productos del carrito
   const getCartDetails = () => {
-    if (!usuario || !products.length) return [];
-    return (usuario.carrito || []).map((ci: any) => {
-      const id = ci.id ?? ci.productId;
-      const cantidad = ci.cantidad ?? ci.quantity ?? 0;
-      const prod = products.find((p) => p.id === id) || null;
-      return { id, cantidad, product: prod };
+    if (!usuario || products.length === 0) return [];
+    return usuario.carrito.map((item: CarritoItem) => {
+      const product = products.find((p) => p.id === item.id);
+      return { ...item, product };
     });
   };
 
   const cartDetails = getCartDetails();
 
+  // 🔹 Cálculos
   const computeSubtotal = () => {
     return cartDetails.reduce((acc, it) => {
       const price = it.product ? parsePrice(it.product.price) : 0;
@@ -67,47 +86,44 @@ export default function CheckoutPage() {
   const computeIVA = () => Math.round(computeSubtotal() * 0.19);
   const computeTotal = () => computeSubtotal() + computeIVA();
 
+  // 🔹 Cambios de input
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    // Limitar longitudes visibles en inputs donde corresponde
     let v = value;
+
     if (name === "telefono") v = v.replace(/[^0-9]/g, "").slice(0, 9);
     if (name === "cardNumber") v = v.replace(/[^0-9]/g, "").slice(0, 16);
     if (name === "cvv") v = v.replace(/[^0-9]/g, "").slice(0, 3);
     if (name === "expiry") v = v.replace(/[^0-9/]/g, "").slice(0, 7);
 
     setFormData((prev) => ({ ...prev, [name]: v }));
-
-    // limpiar error del campo al editar
-    setErrors((prev: any) => ({ ...prev, [name]: undefined }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
+  // 🔹 Confirmar pedido
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!usuario || cartDetails.length === 0) return;
 
-    if (!usuario || !cartDetails.length) return;
+    const newErrors: FormErrors = {};
 
-    // Validaciones
-    const newErrors: any = {};
-    const telefonoOK = /^\d{9}$/.test(formData.telefono);
-    if (!telefonoOK)
-      newErrors.telefono =
-        "Ingrese un teléfono válido de 9 dígitos (ej: 977827552)";
+    if (!/^\d{9}$/.test(formData.telefono))
+      newErrors.telefono = "Ingrese un teléfono válido de 9 dígitos.";
 
     if (formData.metodoPago === "tarjeta") {
       if (!/^\d{16}$/.test(formData.cardNumber))
-        newErrors.cardNumber = "Ingrese 16 dígitos de la tarjeta";
+        newErrors.cardNumber = "Ingrese 16 dígitos de la tarjeta.";
       if (!/^(0[1-9]|1[0-2])\/?([0-9]{2}|[0-9]{4})$/.test(formData.expiry))
-        newErrors.expiry = "Formato expiración MM/YY o MM/YYYY";
-      if (!formData.cardName || formData.cardName.trim().length < 2)
-        newErrors.cardName = "Ingrese el nombre del titular";
+        newErrors.expiry = "Formato expiración MM/YY o MM/YYYY.";
+      if (!formData.cardName.trim())
+        newErrors.cardName = "Ingrese el nombre del titular.";
       if (!/^\d{3}$/.test(formData.cvv))
-        newErrors.cvv = "Ingrese el CVV de 3 dígitos";
+        newErrors.cvv = "Ingrese el CVV de 3 dígitos.";
     }
 
-    if (Object.keys(newErrors).length) {
+    if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
@@ -122,21 +138,19 @@ export default function CheckoutPage() {
       createdAt: new Date().toISOString(),
     };
 
-    // Guardar la orden
     const ordenesJSON = localStorage.getItem("ordenes");
     const ordenes = ordenesJSON ? JSON.parse(ordenesJSON) : [];
     ordenes.push(orden);
     localStorage.setItem("ordenes", JSON.stringify(ordenes));
 
-    // Limpiar carrito
+    // 🔹 Vaciar carrito del usuario
     const nuevoUsuario: Usuario = { ...usuario, carrito: [] };
     setUsuario(nuevoUsuario);
     localStorage.setItem("usuarioLogueado", JSON.stringify(nuevoUsuario));
 
-    // Actualizar usuarios
     const usuariosJSON = localStorage.getItem("usuarios");
-    let usuarios = usuariosJSON ? JSON.parse(usuariosJSON) : [];
-    usuarios = usuarios.map((u: any) =>
+    let usuarios: Usuario[] = usuariosJSON ? JSON.parse(usuariosJSON) : [];
+    usuarios = usuarios.map((u) =>
       u.correo === nuevoUsuario.correo ? nuevoUsuario : u
     );
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
@@ -151,61 +165,44 @@ export default function CheckoutPage() {
     return (
       <div className="d-flex flex-column min-vh-100">
         <Header />
-        <main className="flex-grow-1 container my-4">
-          <p>Cargando...</p>
+        <main className="flex-grow-1 container my-4 text-center">
+          <p>Cargando productos...</p>
         </main>
         <Footer />
       </div>
     );
   }
 
+  if (!usuario) return null;
+
   return (
     <div className="d-flex flex-column min-vh-100">
       <Header />
       <main className="flex-grow-1 container my-4">
         <h1 className="mb-4">Checkout</h1>
-
         <div className="row g-4">
-          {/* Formulario de envío */}
+          {/* FORMULARIO */}
           <div className="col-12 col-lg-8">
             <div className="card p-4">
               <h5 className="mb-3">Datos de envío</h5>
               <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label">Nombre completo</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="nombre"
-                    value={formData.nombre}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Dirección de envío</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="direccion"
-                    value={formData.direccion}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Ciudad</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="ciudad"
-                    value={formData.ciudad}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
+                {[
+                  { label: "Nombre completo", name: "nombre" },
+                  { label: "Dirección de envío", name: "direccion" },
+                  { label: "Ciudad", name: "ciudad" },
+                ].map((f) => (
+                  <div className="mb-3" key={f.name}>
+                    <label className="form-label">{f.label}</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name={f.name}
+                      value={formData[f.name as keyof FormData]}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                ))}
 
                 <div className="mb-3">
                   <label className="form-label">Teléfono</label>
@@ -232,7 +229,6 @@ export default function CheckoutPage() {
                     name="metodoPago"
                     value={formData.metodoPago}
                     onChange={handleInputChange}
-                    required
                   >
                     <option value="tarjeta">Tarjeta de crédito/débito</option>
                     <option value="transferencia">
@@ -241,11 +237,9 @@ export default function CheckoutPage() {
                   </select>
                 </div>
 
-                {/* Campos condicionales para tarjeta */}
                 {formData.metodoPago === "tarjeta" && (
                   <div className="mb-3 card p-3">
                     <h6>Datos de la tarjeta</h6>
-
                     <div className="mb-2">
                       <label className="form-label">Número de tarjeta</label>
                       <input
@@ -257,7 +251,6 @@ export default function CheckoutPage() {
                         value={formData.cardNumber}
                         onChange={handleInputChange}
                         inputMode="numeric"
-                        placeholder="1234123412341234"
                         required
                       />
                       {errors.cardNumber && (
@@ -299,7 +292,6 @@ export default function CheckoutPage() {
                           value={formData.cvv}
                           onChange={handleInputChange}
                           placeholder="123"
-                          inputMode="numeric"
                           required
                         />
                         {errors.cvv && (
@@ -318,7 +310,6 @@ export default function CheckoutPage() {
                         name="cardName"
                         value={formData.cardName}
                         onChange={handleInputChange}
-                        placeholder="Nombre en la tarjeta"
                         required
                       />
                       {errors.cardName && (
@@ -330,35 +321,6 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
-                {/* Información para transferencia bancaria (si aplica) */}
-                {formData.metodoPago === "transferencia" && (
-                  <div className="mb-3 p-3 card">
-                    <h6>Datos para Transferencia</h6>
-                    <p className="mb-1">
-                      <strong>Banco:</strong> Banco Ficticio
-                    </p>
-                    <p className="mb-1">
-                      <strong>Tipo:</strong> Cuenta Vista
-                    </p>
-                    <p className="mb-1">
-                      <strong>Nombre cuenta:</strong> ComiCommerce SPA
-                    </p>
-                    <p className="mb-1">
-                      <strong>Cuenta:</strong> 12345678
-                    </p>
-                    <p className="mb-1">
-                      <strong>RUT (empresa):</strong> 76.543.210-5
-                    </p>
-                    <small className="text-muted">
-                      toma captura de la transferencia y enviala al correo para
-                      confirmar tu pedido
-                    </small>
-                    <p className="mb-1">
-                      <strong>Correo:</strong> contacto@comiccommerce.cl
-                    </p>
-                  </div>
-                )}
-
                 <button type="submit" className="btn btn-danger w-100">
                   Confirmar pedido
                 </button>
@@ -366,42 +328,38 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* Resumen del pedido */}
+          {/* RESUMEN DEL PEDIDO */}
           <div className="col-12 col-lg-4">
             <div className="card p-3 shadow-sm">
               <h5>Resumen del pedido</h5>
               <hr />
-
-              <div className="mb-3">
-                {cartDetails.map((item) => (
+              {cartDetails.map((item) =>
+                item.product ? (
                   <div
                     key={item.id}
                     className="d-flex justify-content-between mb-2"
                   >
                     <small>
-                      {item.product?.name} (x{item.cantidad})
+                      {item.product.name} (x{item.cantidad})
                     </small>
                     <small>
                       {formatPrice(
-                        (item.product ? parsePrice(item.product.price) : 0) *
-                          item.cantidad
+                        parsePrice(item.product.price) * item.cantidad
                       )}
                     </small>
                   </div>
-                ))}
-              </div>
-
-              <div className="d-flex justify-content-between mb-2">
+                ) : null
+              )}
+              <hr />
+              <div className="d-flex justify-content-between">
                 <span>Subtotal</span>
                 <strong>{formatPrice(computeSubtotal())}</strong>
               </div>
-
-              <div className="d-flex justify-content-between mb-3 text-muted">
+              <div className="d-flex justify-content-between text-muted">
                 <small>IVA (19%)</small>
                 <small>{formatPrice(computeIVA())}</small>
               </div>
-
-              <div className="d-flex justify-content-between mb-3">
+              <div className="d-flex justify-content-between mt-2">
                 <span>Total</span>
                 <strong>{formatPrice(computeTotal())}</strong>
               </div>
