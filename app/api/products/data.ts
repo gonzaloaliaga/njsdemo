@@ -72,4 +72,60 @@ export const products = [
     descripcion:
       "Una oscura historia de mayoría de edad donde la vida cotidiana da un vuelco. Esta es la historia de Punpun Onodera sobre su mayoría de edad. El matrimonio de sus padres se está desmoronando. Su padre va a la cárcel y su madre al hospital. Tiene que vivir con su tío perdedor. Está enamorado de una chica que vive en una secta extraña. Punpun intenta hablar con Dios sobre sus problemas, pero Dios es un imbécil. Punpun sigue esperando que las cosas mejoren, pero en realidad no es así. Conoce a Punpun Punyama. Es un chico normal en un pueblo normal. Quiere ganar un Premio Nobel y salvar el mundo. Quiere que la chica que le gusta le corresponda. Eso es lo que quiere, pero ¿qué consigue...?",
   },
+  {
+    id: 9,
+    img: "/products/peacemaker.jpg",
+    name: "Peacemaker #3",
+    price: "$13.430",
+    categoria: "DC",
+    descripcion:
+      "Rodeado por los hombres del Dr. Tzin-Tzin, Peacemaker debe encontrar la manera de abrirse paso entre sus enemigos y escapar. Pero incluso si logra huir de ellos, ¿cómo podrá escapar del fantasma de su padre, que aún lo atormenta a cada instante?",
+  },
+  {
+    id: 10,
+    img: "/products/superman.jpg",
+    name: "Superman #50 (Exclusivo Comic Con)",
+    price: "$34.860",
+    categoria: "DC",
+    descripcion:
+      'Con Superman de vuelta a pleno poder, toma la lucha derecha a Vandal Savage en la conclusión épica de "Savage Dawn"! No querrás perderte la visión de Krypton de Vándalo, ¡y un vistazo a un futuro oscuro que podría gobernar! Este número está escrito por Gene Luen Yang y cuenta con el arte de Howard Porter, Patrick Zircher y Ardian Syaf, además de una página especial del artista clásico Man of Steel Jon Bogdanove! Este número de Superman #50 cuenta con una cubierta exclusiva de Comic Con Box.',
+  },
+  {
+    id: 11,
+    img: "/products/killingjoke.jpg",
+    name: "Batman: The Killing Joke",
+    price: "$54.930",
+    categoria: "DC",
+    descripcion:
+      "El peor enemigo de Batman, el Joker, se ha escapado de la prisión de Arkham una vez más. El criminal toma al inspector Gordon y a su hija, a quien deja en una silla de ruedas. Con este acto, el Joker quiere hacer que el inspector Gordon se vuelva loco. Para salvar al inspector, Batman deberá encontrar el escondite del Joker antes de que sea demasiado tarde.",
+  },
+  {
+    id: 12,
+    img: "/products/marvelrivals.jpg",
+    name: "Marvel Rivals #1 [D] 2025",
+    price: "$7.000",
+    categoria: "MARVEL",
+    descripcion:
+      "¡Llega el cómic basado en el sensacional videojuego! Tokio 2099. La grieta temporal ha perturbado la Red de la Vida y el Destino, obligando a los héroes del mundo a luchar por repararla. Un grupo liderado por Peni Parker quiere conectar la Red al ciberespacio. El otro grupo, liderado por Spiderman, prefiere un enfoque más conservador: usar el Cronovium para fortalecer la red y permitir que se repare a sí misma. La grieta temporal convierte a todos en rivales, pero ¿qué equipo superará al otro? ¡Incluye en exclusiva un aerosol de Jeff!",
+  },
+  {
+    id: 13,
+    img: "/products/spidergwen.webp",
+    name: "Marvel Young Adults. Spider-Gwen #1",
+    price: "$11.790",
+    categoria: "MARVEL",
+    descripcion:
+      "¡Una nueva araña para una nueva generación! La heroína de “Universo Spiderman” en sus propias aventuras. Gwen Stacy es Spiderwoman... pero eso ya lo sabes. Lo que no conoces todavía es a sus amigos y enemigos. Descúbrelo, en el primer volumen recopilatorio de la serie de la que todo el mundo habla.",
+  },
 ];
+
+/*
+  {
+    id: 0,
+    img: "/products/",
+    name: "",
+    price: "",
+    categoria: "",
+    descripcion:""
+  },
+*/
