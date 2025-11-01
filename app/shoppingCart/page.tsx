@@ -21,7 +21,7 @@ export default function ShoppingCartPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
 
-  // --- Cargar todos los productos desde la API ---
+  // Cargar todos los productos desde la API
   useEffect(() => {
     fetch("/api/products")
       .then((r) => r.json())
@@ -30,7 +30,7 @@ export default function ShoppingCartPage() {
       .finally(() => setLoadingProducts(false));
   }, []);
 
-  // --- Cargar usuario logueado desde localStorage ---
+  // Cargar usuario logueado desde localStorage
   useEffect(() => {
     const loadUser = () => {
       const userJSON = localStorage.getItem("usuarioLogueado");
@@ -63,7 +63,7 @@ export default function ShoppingCartPage() {
     };
   }, []);
 
-  // --- Combinar los datos del carrito con los productos ---
+  // Combinar los datos del carrito con los productos
   const getCartDetails = (): CartDetail[] => {
     if (!usuario || !products.length) return [];
     return usuario.carrito.map((ci: CarritoItem) => {
@@ -74,7 +74,7 @@ export default function ShoppingCartPage() {
 
   const cartDetails = getCartDetails();
 
-  // --- Actualizar usuario y sincronizar en localStorage ---
+  // Actualizar usuario y sincronizar en localStorage
   const updateUsuarioAndStorage = (nuevoUsuario: Usuario) => {
     setUsuario(nuevoUsuario);
     localStorage.setItem("usuarioLogueado", JSON.stringify(nuevoUsuario));
@@ -90,7 +90,7 @@ export default function ShoppingCartPage() {
     window.dispatchEvent(new Event("carritoUpdated"));
   };
 
-  // --- Cambiar cantidad de un producto ---
+  // Cambiar cantidad de un producto
   const changeQty = (id: number, delta: number) => {
     if (!usuario) {
       alert("Debes iniciar sesión para modificar el carrito");
@@ -108,14 +108,14 @@ export default function ShoppingCartPage() {
     updateUsuarioAndStorage({ ...usuario, carrito });
   };
 
-  // --- Eliminar producto del carrito ---
+  // Eliminar producto del carrito
   const removeItem = (id: number) => {
     if (!usuario) return;
     const carrito = usuario.carrito.filter((it) => it.id !== id);
     updateUsuarioAndStorage({ ...usuario, carrito });
   };
 
-  // --- Calcular total ---
+  // Calcular total
   const computeTotal = (): number => {
     return cartDetails.reduce((acc, it) => {
       const price = it.product ? parsePrice(it.product.price) : 0;
@@ -123,7 +123,7 @@ export default function ShoppingCartPage() {
     }, 0);
   };
 
-  // --- Ir al checkout ---
+  // Ir al checkout
   const handleCheckout = () => {
     if (!usuario) {
       alert("Debes iniciar sesión para pagar");

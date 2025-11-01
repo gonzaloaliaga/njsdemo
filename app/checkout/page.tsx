@@ -45,7 +45,7 @@ export default function CheckoutPage() {
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
-  // 🔹 Cargar usuario y productos
+  // Cargar usuario y productos
   useEffect(() => {
     const userJSON = localStorage.getItem("usuarioLogueado");
     if (!userJSON) {
@@ -64,7 +64,7 @@ export default function CheckoutPage() {
       .finally(() => setLoadingProducts(false));
   }, [router]);
 
-  // 🔹 Resolver productos del carrito
+  // Resolver productos del carrito
   const getCartDetails = () => {
     if (!usuario || products.length === 0) return [];
     return usuario.carrito.map((item: CarritoItem) => {
@@ -75,7 +75,7 @@ export default function CheckoutPage() {
 
   const cartDetails = getCartDetails();
 
-  // 🔹 Cálculos
+  // Cálculos
   const computeSubtotal = () => {
     return cartDetails.reduce((acc, it) => {
       const price = it.product ? parsePrice(it.product.price) : 0;
@@ -86,7 +86,7 @@ export default function CheckoutPage() {
   const computeIVA = () => Math.round(computeSubtotal() * 0.19);
   const computeTotal = () => computeSubtotal() + computeIVA();
 
-  // 🔹 Cambios de input
+  // Cambios de input
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -102,7 +102,7 @@ export default function CheckoutPage() {
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  // 🔹 Confirmar pedido
+  // Confirmar pedido
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!usuario || cartDetails.length === 0) return;
@@ -143,7 +143,7 @@ export default function CheckoutPage() {
     ordenes.push(orden);
     localStorage.setItem("ordenes", JSON.stringify(ordenes));
 
-    // 🔹 Vaciar carrito del usuario
+    // Vaciar carrito del usuario
     const nuevoUsuario: Usuario = { ...usuario, carrito: [] };
     setUsuario(nuevoUsuario);
     localStorage.setItem("usuarioLogueado", JSON.stringify(nuevoUsuario));

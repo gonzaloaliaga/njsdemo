@@ -60,6 +60,7 @@ export default function Header() {
     setUsuarioLogueado(null);
     setCantidadCarrito(0);
     alert("Has cerrado sesión.");
+    window.location.reload();
   };
 
   return (

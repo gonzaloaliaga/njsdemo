@@ -131,7 +131,7 @@ export default function ContactForm() {
 
         <div className="d-flex justify-content-end">
           <button type="submit" className="btn btn-danger" disabled={sending}>
-            {sending ? "Enviando..." : "enviar mensaje"}
+            {sending ? "Enviando..." : "Enviar mensaje"}
           </button>
         </div>
       </form>
