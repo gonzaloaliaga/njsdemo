@@ -21,7 +21,7 @@ export default function Home() {
     // Fetch a la API
     fetch("/api/products")
       .then((res) => res.json())
-      .then((data) => {
+      .then((data: Product[]) => {
         // Mezclar los productos
         const productosAleatorios = data.sort(() => Math.random() - 0.5);
 
@@ -34,7 +34,6 @@ export default function Home() {
       .catch((err) => console.error("Error fetching products:", err));
   }, []);
 
-  // Retorno del componente principal
   return (
     <div className="d-flex flex-column min-vh-100">
       {/* HEADER */}
@@ -67,13 +66,16 @@ export default function Home() {
               </Link>
             </div>
             <div className="col-md-6 text-center bg-light">
-              <Image
-                src="/assets/welcomeCardImg.jpg"
-                alt="Welcome to ComiCommerce"
-                width={600}
-                height={400}
-                className="img-fluid object-fit-contain"
-              />
+              <div style={{ padding: 16 }}>
+                <Image
+                  src="/assets/welcomeCardImg.jpg"
+                  alt="Welcome to ComiCommerce"
+                  width={600}
+                  height={400}
+                  className="img-fluid"
+                  style={{ objectFit: "contain" }}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -82,24 +84,62 @@ export default function Home() {
         <div className="row g-4">
           {products.map((product) => (
             <div key={product.id} className="col-6 col-md-4 col-lg-3">
-              <div className="card h-100 text-center shadow-sm">
-                <Link href={`/productDetails?id=${product.id}`}>
-                  <Image
-                    src={product.img}
-                    alt={product.name}
-                    width={200}
-                    height={250}
-                    className="card-img-top p-3 img-fluid"
-                  />
-                </Link>
-                <div className="card-body">
-                  <Link
-                    href={`/productDetails?id=${product.id}`}
-                    className="text-decoration-none fw-semibold d-block mb-2"
+              <div
+                className="card h-100 text-center shadow-sm"
+                style={{ height: 500 }}
+              >
+                {/* Caja centrada con tamaño fijo 250x250 */}
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingTop: "1rem",
+                    paddingBottom: "0.5rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 250,
+                      height: 250,
+                      position: "relative", // obligatorio para Image fill
+                      overflow: "hidden",
+                      background: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      boxSizing: "border-box",
+                    }}
                   >
-                    {product.name}
-                  </Link>
-                  <p className="text-muted">{product.price}</p>
+                    <Link
+                      href={`/productDetails?id=${product.id}`}
+                      aria-label={product.name}
+                    >
+                      <Image
+                        src={product.img}
+                        alt={product.name}
+                        fill
+                        style={{ objectFit: "contain" }} // cambiar a "cover" si quieres recortar
+                        priority
+                      />
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="card-body d-flex flex-column justify-content-between mt-auto">
+                  <div>
+                    <Link
+                      href={`/productDetails?id=${product.id}`}
+                      className="text-decoration-none fw-semibold d-block mb-2 text-dark"
+                    >
+                      {product.name}
+                    </Link>
+                  </div>
+
+                  <div>
+                    <p className="text-muted mb-0">{product.price}</p>
+                  </div>
                 </div>
               </div>
             </div>

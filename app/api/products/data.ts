@@ -102,7 +102,7 @@ export const products = [
   {
     id: 12,
     img: "/products/marvelrivals.jpg",
-    name: "Marvel Rivals #1 [D] 2025",
+    name: "Marvel Rivals #1 2025",
     price: "$7.000",
     categoria: "MARVEL",
     descripcion:
